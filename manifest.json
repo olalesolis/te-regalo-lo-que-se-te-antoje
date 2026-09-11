@@ -1,0 +1,10 @@
+{
+  "name": "Te regalo lo que se te antoje",
+  "short_name": "Mis deseos",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#fff9f4",
+  "theme_color": "#7c3aed",
+  "lang": "es-MX",
+  "icons": []
+}

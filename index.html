@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#7c3aed">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Mis deseos">
+<link rel="manifest" href="manifest.json">
+<title>Te regalo lo que se te antoje</title>
+<style>
+:root{--ink:#40334f;--muted:#83758f;--purple:#7c3aed;--pink:#db2777;--card:rgba(255,255,255,.9)}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;background:radial-gradient(circle at 15% 5%,#fff 0,#fff9f4 28%,transparent 55%),linear-gradient(145deg,#fff9f4,#f2eaff);overflow-x:hidden}
+.app{max-width:700px;margin:auto;padding:calc(18px + env(safe-area-inset-top)) 17px calc(30px + env(safe-area-inset-bottom))}
+header{text-align:center;padding:8px 8px 20px}.sparkles{font-size:40px;letter-spacing:5px}.eyebrow{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:2px}h1{font-size:29px;line-height:1.1;margin:6px 0 0;font-weight:800;letter-spacing:-.7px}
+.prayer{background:var(--card);border:1px solid #eadfff;border-radius:25px;padding:20px 17px;text-align:center;line-height:1.62;font-size:15.5px;box-shadow:0 12px 35px rgba(90,60,130,.09)}
+.prayer strong{font-weight:800}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:17px 0}.stat{background:rgba(255,255,255,.72);border:1px solid #eadfff;border-radius:18px;padding:12px;text-align:center}.stat b{display:block;font-size:24px}.stat span{font-size:11px;color:var(--muted)}
+.tabs{display:flex;background:rgba(255,255,255,.65);padding:4px;border-radius:15px;margin-bottom:12px}.tab{flex:1;padding:10px;border-radius:11px;background:transparent;color:var(--muted);font-weight:700}.tab.active{background:white;color:var(--purple);box-shadow:0 3px 12px rgba(80,50,110,.08)}
+.add{display:flex;gap:8px;background:var(--card);padding:9px;border-radius:18px;border:1px solid #eadfff;box-shadow:0 8px 25px rgba(80,50,110,.06);margin-bottom:12px}input{flex:1;min-width:0;border:0;outline:0;background:transparent;padding:10px;font-size:16px;color:var(--ink)}.add button{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;font-weight:800;border-radius:13px;padding:0 16px}
+ul{list-style:none;padding:0;margin:0;display:grid;gap:10px}.item{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid #eadfff;border-radius:18px;padding:12px 11px 12px 14px;box-shadow:0 7px 20px rgba(80,50,110,.06);animation:up .25s ease}.item.conceded{opacity:.72}@keyframes up{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.item-text{flex:1;font-size:16px;line-height:1.35;overflow-wrap:anywhere}.check{width:40px;height:40px;border:0;border-radius:50%;background:#f0eaff;color:var(--purple);font-size:19px;flex:none}.delete{width:32px;height:32px;border:0;background:transparent;color:#aaa;font-size:21px;flex:none}
+.conceded .check{background:#fce7f3;color:var(--pink)}.empty{text-align:center;padding:27px 15px;color:var(--muted);font-size:14px}
+.footer{text-align:center;margin:26px 5px 0;padding:20px 8px;border-top:1px solid #e7d9f5;color:#675875;font-size:15px;line-height:1.55}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,30px) scale(.95);background:#40334f;color:white;border-radius:999px;padding:12px 18px;font-size:14px;opacity:0;transition:.3s;z-index:5;box-shadow:0 12px 30px #0002;white-space:nowrap}.toast.show{opacity:1;transform:translate(-50%,0) scale(1)}
+.burst{position:fixed;inset:0;pointer-events:none;z-index:4;display:none}.burst.show{display:block}.particle{position:absolute;left:50%;top:42%;font-size:25px;animation:fly 900ms ease-out forwards}@keyframes fly{0%{transform:translate(-50%,-50%) scale(.5);opacity:0}15%{opacity:1}100%{transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) rotate(var(--r));opacity:0}}
+@media(max-width:430px){h1{font-size:26px}.prayer{font-size:15px}.add button{padding:0 13px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="sparkles">✦ ✨ ✦</div><div class="eyebrow">Mi lista de manifestación</div><h1>Te regalo lo que se te antoje</h1></header>
+
+<section class="prayer"><strong>“PADRE, DAME A MÍ Y A TODA LA HUMANIDAD, TODAS LAS MARAVILLAS DE TU REINO”</strong><br>
+DESEO EN ARMONÍA PARA TODOS, BAJO LA GRACIA Y DE MANERA PERFECTA QUE SEA MANIFESTADO, GRACIAS PADRE QUE YA ME OÍSTE Y SIEMPRE ME OYES</section>
+
+<div class="stats"><div class="stat"><b id="activeCount">0</b><span>DESEOS ACTIVOS</span></div><div class="stat"><b id="doneCount">0</b><span>DESEOS CONCEDIDOS</span></div></div>
+
+<div class="tabs"><button class="tab active" id="activeTab">Mis deseos</button><button class="tab" id="doneTab">Concedidos ✨</button></div>
+
+<div class="add" id="addBox"><input id="wishInput" maxlength="240" placeholder="Escribe aquí lo que deseas…" autocomplete="off"><button id="addBtn">Agregar</button></div>
+<ul id="wishList"></ul>
+
+<div class="footer">Gracias Padre que ya has dado la orden de que me sean conferidos.</div>
+</div>
+<div class="toast" id="toast">✨ ¡Deseo concedido!</div><div class="burst" id="burst"></div>
+
+<script>
+const KEY="te_regalo_deseos_v2";let data=[];
+try{data=JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){data=[]}
+const input=document.getElementById("wishInput"),list=document.getElementById("wishList"),toast=document.getElementById("toast"),burst=document.getElementById("burst");
+let view="active";
+function save(){localStorage.setItem(KEY,JSON.stringify(data))}
+function render(){
+ const active=data.filter(x=>!x.done),done=data.filter(x=>x.done);
+ document.getElementById("activeCount").textContent=active.length;document.getElementById("doneCount").textContent=done.length;
+ document.getElementById("activeTab").classList.toggle("active",view==="active");document.getElementById("doneTab").classList.toggle("active",view==="done");
+ document.getElementById("addBox").style.display=view==="active"?"flex":"none";
+ const arr=view==="active"?active:done;list.innerHTML="";
+ if(!arr.length){list.innerHTML=`<li class="empty">${view==="active"?"Tu lista está lista para recibir nuevos deseos. ✨":"Aquí aparecerán tus deseos cuando se hayan concedido. 💫"}</li>`;return}
+ arr.forEach(x=>{const li=document.createElement("li");li.className="item"+(x.done?" conceded":"");
+ const t=document.createElement("div");t.className="item-text";t.textContent=x.text;
+ const b=document.createElement("button");b.className="check";b.textContent=x.done?"↩":"✓";b.title=x.done?"Volver a deseos activos":"Marcar como concedido";b.onclick=()=>toggle(x.id);
+ const d=document.createElement("button");d.className="delete";d.textContent="×";d.title="Eliminar";d.onclick=()=>remove(x.id);
+ li.append(t,b,d);list.append(li)})
+}
+function add(){let v=input.value.trim();if(!v)return;data.push({id:Date.now()+Math.random(),text:v,done:false,created:Date.now()});save();render();input.value="";input.focus()}
+function toggle(id){let x=data.find(a=>a.id===id);if(!x)return;x.done=!x.done;save();render();if(x.done)celebrate()}
+function remove(id){data=data.filter(x=>x.id!==id);save();render()}
+function celebrate(){toast.classList.add("show");burst.classList.add("show");["✨","✦","💫","⭐","♡","✨","✦","💜"].forEach((s,i)=>{let p=document.createElement("span");p.className="particle";p.textContent=s;p.style.setProperty("--x",(Math.cos(i/8*Math.PI*2)*150)+"px");p.style.setProperty("--y",(Math.sin(i/8*Math.PI*2)*150)+"px");p.style.setProperty("--r",(i*45-90)+"deg");burst.appendChild(p)});setTimeout(()=>{toast.classList.remove("show");burst.classList.remove("show");burst.innerHTML=""},1100)}
+document.getElementById("addBtn").onclick=add;input.addEventListener("keydown",e=>{if(e.key==="Enter")add()});
+document.getElementById("activeTab").onclick=()=>{view="active";render()};document.getElementById("doneTab").onclick=()=>{view="done";render()};render();
+if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+</script>
+</body></html>
